@@ -1,0 +1,72 @@
+ELASTIC LOAD BALANCE
+Revision of ELB procedure and Task below
+Step1: Created 2 new instances
+	3. configuration and settings
+		#!/bin/bash
+Sudo yum install -y httpd
+		 Sudo chown -R ec2-user:ec2-user /var/www/html
+		Hostname > /var/www/html/index.html
+		Sudo service httpd start
+Step 2: Select Load balancer  Type (classic load balancer)
+-	Load balance name : Elb_001
+•	Create LB inside : default vpc
+•	Internal load balance means only my company people should access that for example time sheets. We are not selecting. we are allowing everyone to access out load balance
+•	Listener configuration:
+Load balance protocol: http port 80
+-	Assign security group 
+-	Configure security setting
+-	Configure health check 
+•	Ping protocol: http
+•	Ping port 80
+•	Path index.html (/var/www/html default location)
+•	Advance details:
+Response time (how long elb should wait for response): 5 secs
+Health check intervals (how frequently ELB can query health check): 30secs
+Unhealthy Threshold (How many time it should get fail consecutively): 2times  
+Healthy treshould (How many time it should get healthy consecutively): 10 times
+-	Add Ec2 instances:  add instances before we created
+•	Make sure u enable cross-zone load balancing 
+-	Tags name: myweserverelb
+-	Review
+-	Create
+Step 3: You will find DNS Name: http://demoloadbalancer-1561781480.us-east-2.elb.amazonaws.com/
+Step 4: check instances, it should be inService
+Step 5: copy and past DNS link. You will find switching between two servers.
+AUTO SCALING
+Step 1: CREATE LAUNCH CONFIGURATION
+-	Select AMI
+-	Type of instance
+-	Configure detail: 
+•	Name: my launch config
+-	Create launch config
+Step 2: Auto scaling Group
+-	Configure to scaling group details:
+•	Group name: MyautoscaleGroup
+•	Group_size: Start with 1 or 2 instance
+•	Network: default vpc
+•	Subnet: choose availabity zone (available your application in multiple availability zone)
+-	Configure scaling Policy: 
+•	You can increase/decrease the GROUP_SIZE depending on CPU usage
+•	Create alarm if NEEDED. Example: when the CPU usage is >=30%/<=20% - launch/delete 1 or 2 or n instances – foe every 5 or 1 or n mins.
+-	Configure Notifications;
+•	Create a topic:
+Send a notification to: myAutoScaling-Notification
+With these recipients:asadasdsa@gmail.com
+-	Tags
+•	Name Autoscale weeb server 
+-	Review
+Create 
+
+Step 4: 
+Login to ec2 server
+Sudo yum install -y stress
+Stress -c m (m is number of cores)
+Stress -d m (d is disk and c are CPU)
+
+
+Refresh http://demoloadbalancer-1561781480.us-east-2.elb.amazonaws.com/
+ip-172-31-32-152
+ip-172-31-39-100
+ip-172-31-7-216
+ip-172-31-22-98
+
